@@ -1,0 +1,4 @@
+/* Resetting fixed constraints to allow Tailwind's fluid containers to work */
+#root {
+  width: 100%;
+}

@@ -1,0 +1,117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  avatar        String?
+  studentIdCard String?   // URL to S3
+  isVerified    Boolean   @default(false)
+  bio           String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  wallet        Wallet?
+  
+  // Relations
+  sessionsAsMentor  Session[] @relation("MentorSessions")
+  sessionsAsStudent Session[] @relation("StudentSessions")
+  
+  transactionsSent     Transaction[] @relation("SenderTransactions")
+  transactionsReceived Transaction[] @relation("ReceiverTransactions")
+
+  skillsToTeach SkillToTeach[]
+  skillsToLearn SkillToLearn[]
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balance   Float    @default(0) // Balance in Credits (1 Credit = 10 INR)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  PAYMENT
+}
+
+model Transaction {
+  id          String          @id @default(cuid())
+  amount      Float
+  type        TransactionType
+  status      String          @default("COMPLETED") // PENDING, COMPLETED, FAILED
+  senderId    String?
+  sender      User?           @relation("SenderTransactions", fields: [senderId], references: [id])
+  receiverId  String?
+  receiver    User?           @relation("ReceiverTransactions", fields: [receiverId], references: [id])
+  createdAt   DateTime        @default(now())
+}
+
+enum SessionType {
+  FREELANCE
+  SKILL_SWAP
+}
+
+enum SessionStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+model Session {
+  id          String        @id @default(cuid())
+  mentorId    String
+  mentor      User          @relation("MentorSessions", fields: [mentorId], references: [id])
+  studentId   String
+  student     User          @relation("StudentSessions", fields: [studentId], references: [id])
+  type        SessionType
+  status      SessionStatus @default(SCHEDULED)
+  cost        Float         @default(0) // In credits, 0 for SKILL_SWAP
+  scheduledAt DateTime
+  topic       String
+  meetingUrl  String?       // Room ID or WebRTC link
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Skill {
+  id    String @id @default(cuid())
+  name  String @unique
+
+  teachers SkillToTeach[]
+  learners SkillToLearn[]
+}
+
+model SkillToTeach {
+  id      String @id @default(cuid())
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skillId String
+  skill   Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skillId])
+}
+
+model SkillToLearn {
+  id      String @id @default(cuid())
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skillId String
+  skill   Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skillId])
+}

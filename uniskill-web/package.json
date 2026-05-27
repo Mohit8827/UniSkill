@@ -1,0 +1,19 @@
+{
+  "name": "uniskill-web",
+  "version": "1.0.0",
+  "description": "A P2P Learning Marketplace for University Students.",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm run start:server\" \"npm run start:client\"",
+    "dev": "npm start",
+    "start:server": "cd server && node index.js",
+    "start:client": "cd client && npm run dev",
+    "deploy": "cd client && npm run build && cd ../server && node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

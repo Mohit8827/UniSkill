@@ -1,0 +1,11 @@
+i want to create a fully functional website which named uniskill, this platform is fully dedicated to student which is peer to peer learning marketplace for students so i want you to think like god and create a greatest of all time website with great ui/ux work make the website industry ready.
+now i explain the functions of the website
+1. only student decdicated website no other freelancer or other person who does not a student will not access the platform 
+2. we login by user student id and email which is verified by any ocr 
+3. in this platform user swap the skill and also freelance by teaching
+4. every teaching session is hosted on 1 on 1 video session built in website using webrtc
+5. website having in app wallet 
+6. website having its own currency named credits (10 rupees = 1 credit)
+7. this credits are withdrawn in user's bank account
+8. this platform does not required any certification
+Supabase project name UNISKILL Pass-COkhfCjjLgzXWyhC
